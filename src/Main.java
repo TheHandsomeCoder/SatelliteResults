@@ -1,4 +1,4 @@
-import org.thehandsomecoder.fieresults.FIEResultsScraper;
+import org.thehandsomecoder.fieresults.FIEScraper;
 
 /**
  * Created by scottomalley on 21/02/15.
@@ -24,9 +24,9 @@ public class Main
     {
         if (args.length == 3)
         {
-            FIEResultsScraper scraper = new FIEResultsScraper(args);
-            scraper.scrapeResultsFromFIESite();
-            //scraper.printResults();
+            FIEScraper scraper = new FIEScraper(args);
+            scraper.scrapeCompetitionsFromFIESite();
+            scraper.printResults();
         } else
         {
             System.out.println("Not enough parameters supplied");

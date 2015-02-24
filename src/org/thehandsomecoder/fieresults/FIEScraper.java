@@ -7,13 +7,15 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by scottomalley on 21/02/15.
  */
-public class FIEResultsScraper
+public class FIEScraper
 {
 //    calendar_models_Calendars[FencCatId]:
 //    calendar_models_Calendars[WeaponId]:
@@ -37,26 +39,22 @@ public class FIEResultsScraper
 
 
     private final String fieResultsURL = "http://fie.org/results-statistic/result";
+    private final String fieBaseURL = "http://fie.org";
     protected Connection connection;
+    private List<FIECompetition> competitions = new ArrayList<FIECompetition>();
 
     String categoryCode;
     String year;
     String countryCode;
 
 
-    public FIEResultsScraper()
-    {
-        connection = Jsoup.connect(fieResultsURL);
-    }
-
-
-    public FIEResultsScraper(String[] parameters)
+    public FIEScraper(String[] parameters)
     {
         connection = Jsoup.connect(fieResultsURL);
         setConnectionParameters(parameters);
     }
 
-    public void setConnectionParameters(String[] connectionParameters)
+    private void setConnectionParameters(String[] connectionParameters)
     {
         try
         {
@@ -144,17 +142,17 @@ public class FIEResultsScraper
         return false;
     }
 
-    public void scrapeResultsFromFIESite()
+    public void scrapeCompetitionsFromFIESite()
     {
         try
         {
             Document doc = connection.get();
             Elements events = doc.select("#result-calendar-grid table tr");
-            for (Element e : events)
+            for (int i = 1; i < events.size(); i++)
             {
-                System.out.println(e);
+                FIECompetition competition = createCompetitionFromElement(events.get(i));
+                scrapeResultsFromCompetitionURL(competition);
             }
-
 
         } catch (IOException e)
         {
@@ -164,5 +162,48 @@ public class FIEResultsScraper
 
     }
 
+    private void scrapeResultsFromCompetitionURL(FIECompetition competition) throws IOException
+    {
+        Document doc = Jsoup.connect(competition.competitionURL).get();
+        Elements results = doc.select("#result-competition-grid table tr");
+        competition.setNumberOfEntries(results.size() - 1);
+        results = filterResultsByCurrentCountryCode(results);
+        competition.addResults(results);
+        competitions.add(competition);
+    }
 
+    private Elements filterResultsByCurrentCountryCode(Elements results)
+    {
+        Elements filteredResults = new Elements();
+        for (Element e : results)
+        {
+            if (e.child(3).text().equals(countryCode))
+            {
+                filteredResults.add(e);
+            }
+        }
+        return filteredResults;
+    }
+
+
+    private FIECompetition createCompetitionFromElement(Element e)
+    {
+        FIECompetition competition = new FIECompetition();
+        competition.competitionName = e.child(1).text();
+        competition.competitionDate = e.child(3).text();
+        competition.competitionURL = fieBaseURL + e.select("a").first().attr("href");
+        return competition;
+    }
+
+
+    public void printResults()
+    {
+        for (FIECompetition c : competitions)
+        {
+            if (c.hasResults())
+            {
+                System.out.println(c);
+            }
+        }
+    }
 }

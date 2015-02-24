@@ -9,13 +9,13 @@ import java.util.Map;
 /**
  * Created by scottomalley on 21/02/15.
  */
-public class FIEResultsScraperTest extends TestCase
+public class FIEScraperTest extends TestCase
 {
-    FIEResultsScraper scraper;
+    FIEScraper scraper;
     public void setUp() throws Exception
     {
         super.setUp();
-        scraper = new FIEResultsScraper();
+        scraper = new FIEScraper();
     }
 
     public void testCreateConnectionFromParameters() throws Exception
