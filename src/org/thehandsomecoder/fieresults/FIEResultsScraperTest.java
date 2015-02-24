@@ -12,7 +12,6 @@ import java.util.Map;
 public class FIEResultsScraperTest extends TestCase
 {
     FIEResultsScraper scraper;
-
     public void setUp() throws Exception
     {
         super.setUp();
@@ -25,6 +24,7 @@ public class FIEResultsScraperTest extends TestCase
         map.put("calendar_models_Calendars[WeaponId]", "E");
         map.put("calendar_models_Calendars[GenderId]", "M");
         map.put("calendar_models_Calendars[CPYear]", "2015");
+        map.put("calendar_models_Calendars[CompCatId]", "SA");
 
         assertEquals(map, scraper.createConnectionParametersFromArguments(new String[]{"ME", "2015", "IRL"}));
     }
@@ -40,5 +40,9 @@ public class FIEResultsScraperTest extends TestCase
         assertFalse(scraper.categoryCodeIsValid("TE"));
     }
 
-
+    public void testCountryCodeIsValid() throws Exception
+    {
+        assertTrue(scraper.countryCodeIsValid("IRL"));
+        assertFalse(scraper.countryCodeIsValid("RED"));
+    }
 }

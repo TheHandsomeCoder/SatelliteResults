@@ -3,6 +3,7 @@ package org.thehandsomecoder.fieresults;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
@@ -79,9 +80,17 @@ public class FIEResultsScraper
         {
             connectionParameters.putAll(createWeaponAndGenderParameters(categoryCode));
             connectionParameters.putAll(createYearParameter(year));
+            connectionParameters.putAll(createCategoryParameter("SA"));
         }
 
         return connectionParameters;
+    }
+
+    private Map<String, String> createCategoryParameter(String category)
+    {
+        Map<String, String> parameters = new HashMap<String, String>();
+        parameters.put(competitionCategoryParameter, category);
+        return parameters;
     }
 
     private boolean checkParametersAreValid(String categoryCode, String countryCode)
@@ -111,11 +120,11 @@ public class FIEResultsScraper
         return parameters;
     }
 
-    private boolean categoryCodeIsValid(String categoryCode)
+    protected boolean categoryCodeIsValid(String categoryCode)
     {
         for (String s : categoryCodes)
         {
-            if (s == categoryCode)
+            if (s.equals(categoryCode))
             {
                 return true;
             }
@@ -123,11 +132,11 @@ public class FIEResultsScraper
         return false;
     }
 
-    private boolean countryCodeIsValid(String countryCode)
+    protected boolean countryCodeIsValid(String countryCode)
     {
         for (String s : countryCodes)
         {
-            if (s == countryCode)
+            if (s.equals(countryCode))
             {
                 return true;
             }
@@ -141,6 +150,10 @@ public class FIEResultsScraper
         {
             Document doc = connection.get();
             Elements events = doc.select("#result-calendar-grid table tr");
+            for (Element e : events)
+            {
+                System.out.println(e);
+            }
 
 
         } catch (IOException e)

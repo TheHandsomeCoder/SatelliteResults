@@ -26,7 +26,7 @@ public class Main
         {
             FIEResultsScraper scraper = new FIEResultsScraper(args);
             scraper.scrapeResultsFromFIESite();
-            scraper.printResults();
+            //scraper.printResults();
         } else
         {
             System.out.println("Not enough parameters supplied");
