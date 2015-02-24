@@ -12,6 +12,7 @@ import java.util.Map;
 public class FIEResultsScraperTest extends TestCase
 {
     FIEResultsScraper scraper;
+
     public void setUp() throws Exception
     {
         super.setUp();
@@ -20,14 +21,12 @@ public class FIEResultsScraperTest extends TestCase
 
     public void testCreateConnectionFromParameters() throws Exception
     {
-        scraper.createConnectionParametersFromArguments(new String[]{"ME","2015", "IRL"});
-    }
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("calendar_models_Calendars[WeaponId]", "E");
+        map.put("calendar_models_Calendars[GenderId]", "M");
+        map.put("calendar_models_Calendars[CPYear]", "2015");
 
-    public void testWeaponAndGenderSetByParam() throws Exception
-    {
-        Map<String, String> testMap = new HashMap<String, String>();
-
-        assertEquals(testMap, scraper.createWeaponAndGenderParameters("ME"));
+        assertEquals(map, scraper.createConnectionParametersFromArguments(new String[]{"ME", "2015", "IRL"}));
     }
 
     public void testCategoryCodeIsValid() throws Exception
@@ -40,4 +39,6 @@ public class FIEResultsScraperTest extends TestCase
         assertTrue(scraper.categoryCodeIsValid("WE"));
         assertFalse(scraper.categoryCodeIsValid("TE"));
     }
+
+
 }

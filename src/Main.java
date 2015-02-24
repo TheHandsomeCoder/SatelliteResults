@@ -1,9 +1,4 @@
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
+import org.thehandsomecoder.fieresults.FIEResultsScraper;
 
 /**
  * Created by scottomalley on 21/02/15.
@@ -27,23 +22,14 @@ public class Main
 
     public static void main(String args[])
     {
-        Document doc = null;
-        Connection connection;
-        Elements newsHeadlines;
-        int pagination;
-        String fieResultsURL = "http://fie.org/results-statistic/result";
-        try
+        if (args.length == 3)
         {
-            connection = Jsoup.connect(fieResultsURL).timeout(50000);
-            connection.data("calendar_models_Calendars[CPYear]", "2015");
-            doc = connection.get();
-            newsHeadlines = doc.select("#result-calendar-grid table tr");
-
-            pagination  = doc.select("div.pagination_i ul li").size();
-            System.out.println(pagination);
-        } catch (IOException e)
+            FIEResultsScraper scraper = new FIEResultsScraper(args);
+            scraper.scrapeResultsFromFIESite();
+            scraper.printResults();
+        } else
         {
-            e.printStackTrace();
+            System.out.println("Not enough parameters supplied");
         }
 
     }

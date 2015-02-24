@@ -2,7 +2,10 @@ package org.thehandsomecoder.fieresults;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,35 +42,76 @@ public class FIEResultsScraper
     String year;
     String countryCode;
 
+
     public FIEResultsScraper()
     {
         connection = Jsoup.connect(fieResultsURL);
     }
 
+
+    public FIEResultsScraper(String[] parameters)
+    {
+        connection = Jsoup.connect(fieResultsURL);
+        setConnectionParameters(parameters);
+    }
+
+    public void setConnectionParameters(String[] connectionParameters)
+    {
+        try
+        {
+            connection.data(createConnectionParametersFromArguments(connectionParameters));
+        } catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
     public Map<String, String> createConnectionParametersFromArguments(String[] parameters) throws Exception
     {
+        categoryCode = parameters[0];
+        year = parameters[1];
+        countryCode = parameters[2];
+
         Map<String, String> connectionParameters = new HashMap<String, String>();
 
 
-        if(categoryCodeIsValid(categoryCode))
+        if (checkParametersAreValid(categoryCode, countryCode))
         {
             connectionParameters.putAll(createWeaponAndGenderParameters(categoryCode));
+            connectionParameters.putAll(createYearParameter(year));
         }
 
-
-
-        return null;
+        return connectionParameters;
     }
 
-    protected Map<String, String> createWeaponAndGenderParameters(String categoryCode)
+    private boolean checkParametersAreValid(String categoryCode, String countryCode)
+    {
+        return categoryCodeIsValid(categoryCode) && countryCodeIsValid(countryCode);
+    }
+
+    private Map<String, String> createWeaponAndGenderParameters(String categoryCode)
     {
         Map<String, String> parameters = new HashMap<String, String>();
 
+        String gender = categoryCode.substring(0, 1);
+        String weapon = categoryCode.substring(1, 2);
+
+        parameters.put(weaponParameter, weapon);
+        parameters.put(genderParameter, gender);
 
         return parameters;
     }
 
-    protected boolean categoryCodeIsValid(String categoryCode)
+    private Map<String, String> createYearParameter(String year)
+    {
+        Map<String, String> parameters = new HashMap<String, String>();
+
+        parameters.put(yearParameter, year);
+
+        return parameters;
+    }
+
+    private boolean categoryCodeIsValid(String categoryCode)
     {
         for (String s : categoryCodes)
         {
@@ -79,7 +123,7 @@ public class FIEResultsScraper
         return false;
     }
 
-    protected boolean countryCodeIsValid(String countryCode)
+    private boolean countryCodeIsValid(String countryCode)
     {
         for (String s : countryCodes)
         {
@@ -89,6 +133,22 @@ public class FIEResultsScraper
             }
         }
         return false;
+    }
+
+    public void scrapeResultsFromFIESite()
+    {
+        try
+        {
+            Document doc = connection.get();
+            Elements events = doc.select("#result-calendar-grid table tr");
+
+
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+
     }
 
 
