@@ -48,6 +48,12 @@ public class FIEScraper
     String countryCode;
 
 
+    public FIEScraper()
+    {
+        connection = Jsoup.connect(fieResultsURL);
+    }
+
+
     public FIEScraper(String[] parameters)
     {
         connection = Jsoup.connect(fieResultsURL);
